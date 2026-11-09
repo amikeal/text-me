@@ -42,21 +42,65 @@ The name should convey the core value: **fast, thoughtless capture** of whatever
 | Tidepool | Things gather; you come back at low tide. | [Tidepool Mobile](https://apps.appfollow.io/ios/tidepool-mobile/1026395200?country=us) (diabetes app) | [Registered](https://www.trademarkelite.com/trademark/trademark-detail/97852157/TIDEPOOL) Class 42 software mark (Tidepool Project) | **Eliminated** |
 | Magpie | Collects shiny things. | [Magpie – Photos & Notes](https://apps.apple.com/app/id1452537332); [Magpie: Save Now. Work Later.](https://apps.apple.com/us/app/-/id6759075811) (2026) | Not checked | **Eliminated**: two direct conflicts |
 
-## 6. Shortlist
+Owner feedback on round 2: Jotsam not convincing yet but kept; Ferret rejected. Preference remains for the feel of Tuck and Cubby.
 
-1. **Jotsam** — clearest available, coined (strongest trademark category). Risk: people may not get it or spell it right ("Jotsum"). Subtitle helps: "Jotsam: Note to Self".
-2. **Ferret** — best meaning of any candidate. Risk: KPTools Class 9 registration; mixed associations with the animal.
-3. **Cubby** — fallback; crowded but no direct notes conflict found.
+## 6. Round 3: Names with the Tuck/Cubby feel
 
-## 7. Limitations
+What Tuck and Cubby share: one or two syllables, a hard "k" sound, warm and domestic, and **a small personal space where you put things**. They feel tucked in, not filed away.
+
+| Name | Meaning | App Store | US trademark | Verdict |
+|---|---|---|---|---|
+| **Bindle** | The bundle on a stick a traveler carries everything in | No exact match; [MyBindle](https://apps.apple.com/us/app/mybindle/id6474642346) (file storage and link sharing) is a near-name | Software filings for BINDLE are dead ([2011](https://markinton.com/trademark/bindle-85350843), [2015 messaging app](https://markinton.com/trademark/bindle-86841196), [2015](https://markinton.com/trademark/bindle-86559778)); only live filing is [Class 8 tools](https://markinton.com/trademark/bindle-98780712) | **Clear-ish** |
+| **Tucket** | An archaic word for a trumpet flourish; sounds like "tuck it" | Nothing found | Nothing found (nearest: [TRUCKET](https://trademarks.justia.com/owners/trucket-com-llc-5102668), a marketing app) | **Clear-ish.** Reads as "tuck it" or "bucket"; the real meaning is irrelevant. |
+| **Tuckbox** | British word for a child's box of treats kept at boarding school | No exact match; [tuck.](https://apps.apple.com/gb/app/tuck/id1546590976) is a UK cashback app | No software mark found; [TUCK BOX](https://markinton.com/trademark/tuck-box-78328725) (furniture) dead; [TUCKNBOX](https://markinton.com/trademark/tucknbox-99112133) (car accessories) live | **Clear-ish**, but it sits close to the pending [TUCK](https://trademarks.justia.com/997/97/tuck-99797640.html) app filing and the existing Tuck bookmark app |
+| Thinket | Coined: *think* + *trinket* | Nothing found | [THE THINKET](https://trademarkdir.com/trademark/the-thinket-77675352), **live** Class 9 registration (2009); goods not shown | **Blocked unless** TSDR shows the goods are unrelated |
+| Hutch | Storage cabinet; a small home for a rabbit | No notes app found | [HUTCH](https://markinton.com/trademark/hutch-90115173) pending in Class 9 (including software) by Hutchison Whampoa, a large conglomerate and longtime "Hutch" telecom brand | **High risk**: large, motivated mark owner |
+
+Other round-3 ideas not checked: Drey (squirrel's nest), Larder, Tuckit, Cubbi/Kubbi, Stowie, Snugget.
+
+## 7. Subtitle / tagline
+
+Constraint: the **App Store subtitle is 30 characters max** and is indexed for search. It should explain the app and include words people search for (*notes*, *self*, *to-do*). Clever lines work better as marketing copy than as the subtitle.
+
+**Clear, keyword-heavy (subtitle candidates):**
+| Phrase | Chars |
+|---|---|
+| Notes to self, sorted for you | 29 |
+| Notes, links & to-dos, sorted | 29 |
+| The note-to-self that sorts | 27 |
+| Notes to self that come back | 28 |
+| Quick notes, auto-sorted | 24 |
+
+**Rhythmic and memorable (marketing line candidates):**
+| Phrase | Chars |
+|---|---|
+| Jot it now. Find it later. | 26 |
+| Save anything. Lose nothing. | 28 |
+| Drop it in. Get it back. | 24 |
+| Capture now. Sort never. | 24 |
+| Think it. Tuck it. Find it. | 27 |
+
+**Working choice:** subtitle "Notes to self, sorted for you"; marketing line "Jot it now. Find it later." or "Save anything. Lose nothing."
+
+## 8. Shortlist
+
+1. **Bindle** — clearest of the Tuck/Cubby-feel names; playful and memorable.
+2. **Tucket** — clear; keeps the "tuck it" sound without colliding with Tuck.
+3. **Tuckbox** — closest to the preferred Tuck feel; watch proximity to TUCK.
+4. **Jotsam** — clearest overall (coined), but not yet convincing to the owner.
+5. **Cubby** — fallback; crowded but no direct notes conflict found.
+
+Eliminated: Ferret (owner rejected), Thinket (pending TSDR check), Hutch, plus all earlier eliminations.
+
+## 9. Limitations
 
 - All findings come from web search plus third-party trademark sites, not USPTO TSDR. They're good enough to rule names out, not to clear them.
 - Domain availability was **not** checked: registry lookups were blocked in the research environment.
 - The App Store wasn't searched directly; results come from web-indexed listings and may miss apps.
 
-## 8. Next steps
+## 10. Next steps
 
-1. Target-user gut check: say the shortlist names to the original user and 3–5 peers.
+1. Gut check: say each shortlisted name together with the subtitle aloud to 5–10 people in the launch segment (people with a capture workaround, any age).
 2. Search USPTO directly ([tmsearch.uspto.gov](https://tmsearch.uspto.gov)), Classes 9 and 42, including spelling variants.
 3. Search the App Store on a device for exact and similar names.
 4. Check domains (`.app`, `.com`, and reasonable variants such as `getjotsam.com`).

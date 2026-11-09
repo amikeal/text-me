@@ -1,7 +1,7 @@
 # Product Spec: Single-Input Capture Stream (working name: text-me)
 
 Status: Draft / pre-validation
-Last updated: 2026-11-08
+Last updated: 2026-11-09
 
 ## 1. Problem
 
@@ -36,7 +36,19 @@ Keep the capture behavior exactly as frictionless as a self-text, then add what 
 
 ## 4. Target user
 
-Primary: people who already self-text or keep a "notes to self" chat and won't invest time organizing a productivity app. Skews younger and non-power-user. Explicitly *not* targeting GTD/power users, who are well served by Things, Todoist, Drafts, Obsidian, etc.
+**Market:** anyone who wants a low-friction way to capture thoughts and get them back later: not losing them, finding them, being reminded of them, using them.
+
+**Launch segment:** people who **already have a capture workaround**, which shows they have the need:
+- texting or messaging themselves (iMessage, WhatsApp "message yourself", Telegram Saved Messages)
+- emailing themselves
+- keeping one long running note they rarely revisit
+- screenshotting things "to deal with later"
+
+The segment is defined by behavior, not age. These people have shown they will capture; what they lack is retrieval and resurfacing. They won't invest time organizing a productivity app.
+
+**Explicitly not targeting:** GTD and power users who enjoy organizing. They're well served by Things, Todoist, Drafts, Obsidian, etc., and the no-organization principle will frustrate them.
+
+**Positioning (working):** App Store subtitle "Notes to self, sorted for you" (29 chars; names the existing habit plus the value, and carries search keywords). Marketing line candidates: "Jot it now. Find it later." / "Save anything. Lose nothing." See [`naming.md`](naming.md).
 
 ## 5. Core experience
 
@@ -216,7 +228,7 @@ Note on CloudKit + SwiftData: all properties must be optional or have defaults, 
 | # | Risk | Impact | Mitigation / validation |
 |---|---|---|---|
 | R1 | Classifier accuracy on real, messy self-notes is too low | Core thesis fails; misclassified to-dos are "lost" | Offline eval on real data before UI build (`classifier-eval-plan.md`) |
-| R2 | Foundation Models device requirements exclude much of the target audience (teens on older phones) | Tier B becomes the majority experience | Measure heuristic baseline in eval; make Tier B viable; check target-user device mix during research |
+| R2 | Foundation Models device requirements exclude a meaningful share of the target audience (anyone on an older phone or with Apple Intelligence off) | Tier B becomes a large share of the experience | Measure heuristic baseline in eval; make Tier B viable; check target-user device mix during research |
 | R3 | Users don't actually lose items / never retrieve | Organization adds no value for them | User research thread review (§10) |
 | R4 | Background execution unreliable; Foundation Models may be unavailable or throttled in background | Digests late or empty | Time-critical surfacing uses pre-scheduled local notifications; digest generated on open as fallback; prototype background FM usage early |
 | R5 | Share extension memory limits prevent on-device model use | Can't classify in extension | Queue raw items; classify in main app (already the design) |
@@ -228,7 +240,7 @@ Note on CloudKit + SwiftData: all properties must be optional or have defaults, 
 
 Goal: validate R3 and gather the eval dataset.
 
-1. With consent, review a self-text thread with the owner (start with 1 person, then 3–5 peers).
+1. With consent, review a self-capture workaround (self-text thread, self-email folder, running note) with its owner. Start with 1 person, then 3–5 more across different ages and workaround types.
 2. For the last ~100–200 entries, record: content type mix (task / link / note / idea / other), presence of deadlines, multi-item entries.
 3. Ask: when did you last go back to find something? Did you find it? Ever missed something you'd written down?
 4. Note device model (Apple Intelligence–capable or not).
