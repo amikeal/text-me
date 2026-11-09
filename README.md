@@ -12,6 +12,7 @@ Pre-build. Validating the concept and classifier accuracy before writing app cod
 
 - [Product spec](docs/product-spec.md): problem, principles, UX, classification design, architecture, MVP scope, risks, open questions
 - [Classifier eval plan](docs/classifier-eval-plan.md): how to test on-device classification against real self-notes before building UI
+- [Naming research](docs/naming.md): name candidates, App Store and trademark conflicts, shortlist
 
 ## Next steps
 
