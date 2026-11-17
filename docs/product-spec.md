@@ -1,7 +1,12 @@
-# Product Spec: Single-Input Capture Stream (working name: text-me)
+# Product Spec: Cubby
 
-Status: Draft / pre-validation
-Last updated: 2026-11-09
+Status: v0.1 built (see README "What's verified"); classifier eval and user research not yet run
+Last updated: 2026-11-17
+
+**Decided (2026-11-17):** working name **Cubby**; App Store subtitle **"Notes to self, sorted for you"**;
+marketing line **"Drop it in. Find it later."** The app opens to a blank capture page with the
+keyboard up (design option B); a setting switches the start screen to the timeline with the
+keyboard up (option A). Light and dark mode.
 
 ## 1. Problem
 
@@ -48,9 +53,17 @@ The segment is defined by behavior, not age. These people have shown they will c
 
 **Explicitly not targeting:** GTD and power users who enjoy organizing. They're well served by Things, Todoist, Drafts, Obsidian, etc., and the no-organization principle will frustrate them.
 
-**Positioning (working):** App Store subtitle "Notes to self, sorted for you" (29 chars; names the existing habit plus the value, and carries search keywords). Marketing line candidates: "Jot it now. Find it later." / "Save anything. Lose nothing." See [`naming.md`](naming.md).
+**Positioning (working):** App Store subtitle "Notes to self, sorted for you" (29 chars; names the existing habit plus the value, and carries search keywords). Marketing line: "Drop it in. Find it later." See [`naming.md`](naming.md).
 
 ## 5. Core experience
+
+### 5.0 Opening screen
+
+- **Default: blank page.** Large type, keyboard up, a send button, and a "Timeline · N open to-dos"
+  pill at the top that opens the timeline. After saving, a short "saved" line confirms it and the
+  page clears for the next thought.
+- **Setting: timeline.** Opens to the stream with the composer focused above the keyboard.
+- Returning to the app after more than a minute away resets to the chosen start screen, ready to type.
 
 ### 5.1 Capture
 
