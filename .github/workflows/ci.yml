@@ -69,29 +69,13 @@ jobs:
           echo "---"
           grep -q "BUILD SUCCEEDED" build.log || { tail -80 build.log; exit 1; }
 
-      - name: UI tests
-        run: |
-          set -o pipefail
-          DEVICE=$(xcrun simctl list devices available | grep -E "iPhone 1[6-9] Pro \(|iPhone 1[6-9] \(" | head -1 | sed -E 's/.*\(([0-9A-F-]{36})\).*/\1/')
-          echo "Testing on $DEVICE"
-          xcodebuild test \
-            -project Cubby.xcodeproj \
-            -scheme Cubby \
-            -destination "id=$DEVICE" \
-            -derivedDataPath build \
-            -resultBundlePath ui-tests.xcresult \
-            CODE_SIGNING_ALLOWED=NO \
-            > ui-tests.log 2>&1 && STATUS=0 || STATUS=$?
-          grep -E "Test Case .*(passed|failed)|error:|Executed [0-9]+ test|TEST (SUCCEEDED|FAILED)" ui-tests.log || tail -80 ui-tests.log
-          exit $STATUS
-
       - name: Screenshots with demo data (light and dark)
-        if: always()
+        timeout-minutes: 12
         run: |
           set -x
           APP=$(find build/Build/Products -name "Cubby.app" -maxdepth 3 | head -1)
           DEVICE=$(xcrun simctl list devices available | grep -E "iPhone 1[6-9] Pro \(|iPhone 1[6-9] \(" | head -1 | sed -E 's/.*\(([0-9A-F-]{36})\).*/\1/')
-          xcrun simctl boot "$DEVICE" || true   # already booted if the UI tests ran
+          xcrun simctl boot "$DEVICE"
           xcrun simctl bootstatus "$DEVICE" -b
           xcrun simctl install "$DEVICE" "$APP"
           BUNDLE=$(/usr/libexec/PlistBuddy -c "Print :CFBundleIdentifier" "$APP/Info.plist")
@@ -118,8 +102,56 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: logs
+          name: build-log
+          path: build.log
+          if-no-files-found: ignore
+
+  ui-tests:
+    name: UI tests
+    runs-on: macos-26
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Select newest Xcode 26
+        run: |
+          XCODE=$(ls -d /Applications/Xcode_26*.app | sort -V | tail -1)
+          sudo xcode-select -s "$XCODE"
+          xcodebuild -version
+
+      - name: Generate the Xcode project
+        run: |
+          brew install xcodegen
+          xcodegen generate
+
+      - name: Run UI tests
+        timeout-minutes: 30
+        run: |
+          DEVICE=$(xcrun simctl list devices available | grep -E "iPhone 1[6-9] Pro \(|iPhone 1[6-9] \(" | head -1 | sed -E 's/.*\(([0-9A-F-]{36})\).*/\1/')
+          echo "Testing on $DEVICE"
+          STATUS=0
+          xcodebuild test \
+            -project Cubby.xcodeproj \
+            -scheme Cubby \
+            -destination "id=$DEVICE" \
+            -derivedDataPath build \
+            -resultBundlePath ui-tests.xcresult \
+            CODE_SIGNING_ALLOWED=NO \
+            > ui-tests.log 2>&1 || STATUS=$?
+          echo "--- results ---"
+          grep -E "Test Case .*(passed|failed)|: error: |Executed [0-9]+ test|\*\* TEST" ui-tests.log || tail -100 ui-tests.log
+          if [ "$STATUS" != "0" ]; then
+            echo "--- failure summary ---"
+            xcrun xcresulttool get test-results summary --path ui-tests.xcresult || true
+          fi
+          exit $STATUS
+
+      - name: Upload UI test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-tests
           path: |
-            build.log
             ui-tests.log
+            ui-tests.xcresult
           if-no-files-found: ignore

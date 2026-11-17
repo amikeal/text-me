@@ -22,20 +22,28 @@ final class CubbyUITests: XCTestCase {
         app.staticTexts[label].firstMatch
     }
 
+    /// True once the element is the first responder. Checks focus rather than the on-screen
+    /// keyboard, which CI simulators often don't show.
+    private func waitForFocus(_ element: XCUIElement, timeout: TimeInterval = 5) -> Bool {
+        let focused = XCTNSPredicateExpectation(predicate: NSPredicate(format: "hasKeyboardFocus == true"), object: element)
+        return XCTWaiter().wait(for: [focused], timeout: timeout) == .completed
+    }
+
     // MARK: - Blank page (the default)
 
     func testBlankPageOpensReadyToTypeAndSavesIntoTheTimeline() {
         launch(startScreen: "capture")
 
-        XCTAssertTrue(element("captureField").waitForExistence(timeout: 10), "capture field")
-        XCTAssertTrue(app.keyboards.firstMatch.waitForExistence(timeout: 5), "keyboard should be up on launch")
+        let field = element("captureField")
+        XCTAssertTrue(field.waitForExistence(timeout: 10), "capture field")
+        XCTAssertTrue(waitForFocus(field), "the blank page should open ready to type")
 
         app.typeText("buy stamps tomorrow")
         app.buttons["Save"].tap()
 
         element("timelinePill").tap()
         XCTAssertTrue(text("buy stamps tomorrow").waitForExistence(timeout: 5), "saved entry appears in the timeline")
-        XCTAssertTrue(text("Tomorrow").exists, "a deadline chip for tomorrow")
+        XCTAssertTrue(text("Due Tomorrow").exists, "a deadline chip for tomorrow")
     }
 
     func testSettingsOpenFromTheBlankPage() {
@@ -50,8 +58,9 @@ final class CubbyUITests: XCTestCase {
 
     func testTimelineStartFocusesTheComposer() {
         launch(startScreen: "timeline")
-        XCTAssertTrue(element("composerField").waitForExistence(timeout: 10), "composer")
-        XCTAssertTrue(app.keyboards.firstMatch.waitForExistence(timeout: 5), "keyboard should be up on launch")
+        let composer = element("composerField")
+        XCTAssertTrue(composer.waitForExistence(timeout: 10), "composer")
+        XCTAssertTrue(waitForFocus(composer), "the timeline start should open ready to type")
         XCTAssertTrue(text("milk, eggs, call mom").exists, "recent entries are visible above the keyboard")
     }
 
