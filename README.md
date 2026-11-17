@@ -53,8 +53,7 @@ other devices use the built-in rules.
 cd Packages/CubbyCore && swift test
 ```
 
-CI (`.github/workflows/ci.yml`) runs these tests, builds the app for the simulator, and uploads
-light and dark screenshots of both opening screens with demo data.
+UI tests: in Xcode, Product › Test (⌘U) with an iPhone simulator selected.
 
 ## Classifier evaluation
 
@@ -77,13 +76,26 @@ and the plan in [`docs/classifier-eval-plan.md`](docs/classifier-eval-plan.md).
 
 ## What's verified
 
-- **Core logic** (`CubbyCore`): unit tests for date parsing, classification, link detection, the
-  share inbox, widget data, deadline labels and the digest.
+CI runs on every push (`.github/workflows/ci.yml`, GitHub's macOS 26 runners, Xcode 26):
+
+- **Core logic** (`CubbyCore`): 55 unit tests covering date parsing, classification, link
+  detection, the share inbox, widget data, deadline labels and the digest.
+- **App build**: the app, share extension and widget compile with no compiler warnings.
+- **UI tests** (`CubbyUITests`, 7 tests) drive the real app in the iOS simulator with demo data:
+  - the blank page opens with input focus and a saved entry lands in the timeline with its deadline
+  - the timeline start focuses the composer
+  - the filters show only matching entries
+  - completing a to-do works
+  - long-press correction works
+  - search works
+  - settings open
+- **Screenshots** of both opening screens in light and dark mode are attached to each CI run.
 - **Scorer** (`eval/score.py`): tested against predictions with known errors.
-- **App, extensions and widget**: compiled and screenshotted by CI on GitHub's macOS runners.
-  The code was written without local access to Xcode, so check CI before relying on a build.
-- **Not yet verified on a device**: iCloud sync, notifications, the share extension, the widget,
-  Siri, and Foundation Models sorting quality (run the eval).
+
+Not yet verified: anything that needs a real device or account (iCloud sync, notification
+delivery, the share extension and widget in use, Siri), and **sorting accuracy on real notes**.
+The built-in rules score 100% on the 16 sample notes, but the same person wrote those notes and
+the rules, so that number means nothing. Run the eval on real self-notes before trusting the sorting.
 
 ## Docs
 
