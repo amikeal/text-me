@@ -1,0 +1,20 @@
+// Cubby build settings shared by the app, the share extension and the widget.
+//
+// To run on a real device, or to turn on iCloud sync, set your Apple developer team and a bundle
+// identifier you own. Put them in Config/Local.xcconfig (ignored by git) to keep them out of the
+// repository:
+//
+//     DEVELOPMENT_TEAM = ABCDE12345
+//     CUBBY_BUNDLE_ID = com.yourname.cubby
+//
+// The simulator runs without either.
+
+DEVELOPMENT_TEAM =
+CUBBY_BUNDLE_ID = com.example.cubby
+
+// Derived from the bundle identifier. The app group is how the share extension and the widget
+// exchange data with the app; the iCloud container is where sync stores entries.
+CUBBY_APP_GROUP = group.$(CUBBY_BUNDLE_ID)
+CUBBY_ICLOUD_CONTAINER = iCloud.$(CUBBY_BUNDLE_ID)
+
+#include? "Local.xcconfig"

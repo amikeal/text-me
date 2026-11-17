@@ -1,0 +1,103 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  core:
+    name: Core logic tests
+    runs-on: macos-26
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select newest Xcode 26
+        run: |
+          XCODE=$(ls -d /Applications/Xcode_26*.app | sort -V | tail -1)
+          sudo xcode-select -s "$XCODE"
+          xcodebuild -version
+          swift --version
+
+      - name: Test CubbyCore
+        working-directory: Packages/CubbyCore
+        run: swift test
+
+      - name: Run the rule-based classifier on the sample notes
+        working-directory: eval/harness
+        run: swift run cubby-eval heur ../sample/entries.sample.jsonl ../out/heur.jsonl
+
+      - name: Score it (informational; the sample is made up)
+        run: python3 eval/score.py --gold eval/sample/entries.sample.jsonl --pred eval/out/heur.jsonl --errors || true
+
+  app:
+    name: Build app and take screenshots
+    runs-on: macos-26
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select newest Xcode 26
+        run: |
+          XCODE=$(ls -d /Applications/Xcode_26*.app | sort -V | tail -1)
+          sudo xcode-select -s "$XCODE"
+          xcodebuild -version
+
+      - name: Generate the Xcode project
+        run: |
+          brew install xcodegen
+          xcodegen generate
+
+      - name: Build for the simulator
+        run: |
+          set -o pipefail
+          xcodebuild build \
+            -project Cubby.xcodeproj \
+            -scheme Cubby \
+            -configuration Debug \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            | tee build.log | grep -E "(error|warning: unre|BUILD)" || true
+          grep -q "BUILD SUCCEEDED" build.log
+
+      - name: Screenshots with demo data (light and dark)
+        run: |
+          set -x
+          APP=$(find build/Build/Products -name "Cubby.app" -maxdepth 3 | head -1)
+          DEVICE=$(xcrun simctl list devices available | grep -E "iPhone 1[6-9] Pro \(|iPhone 1[6-9] \(" | head -1 | sed -E 's/.*\(([0-9A-F-]{36})\).*/\1/')
+          xcrun simctl boot "$DEVICE"
+          xcrun simctl bootstatus "$DEVICE" -b
+          xcrun simctl install "$DEVICE" "$APP"
+          BUNDLE=$(/usr/libexec/PlistBuddy -c "Print :CFBundleIdentifier" "$APP/Info.plist")
+          mkdir -p screenshots
+          for MODE in light dark; do
+            xcrun simctl ui "$DEVICE" appearance $MODE
+            for SCREEN in capture timeline; do
+              xcrun simctl terminate "$DEVICE" "$BUNDLE" || true
+              xcrun simctl launch "$DEVICE" "$BUNDLE" -cubbyDemo -startScreen $SCREEN
+              sleep 6
+              xcrun simctl io "$DEVICE" screenshot "screenshots/$SCREEN-$MODE.png"
+            done
+          done
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: screenshots/
+          if-no-files-found: ignore
+
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: build.log
+          if-no-files-found: ignore
