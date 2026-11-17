@@ -15,7 +15,7 @@ jobs:
     runs-on: macos-26
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Select newest Xcode 26
         run: |
@@ -40,7 +40,7 @@ jobs:
     runs-on: macos-26
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Select newest Xcode 26
         run: |
@@ -63,15 +63,35 @@ jobs:
             -destination 'generic/platform=iOS Simulator' \
             -derivedDataPath build \
             CODE_SIGNING_ALLOWED=NO \
-            | tee build.log | grep -E "(error|warning: unre|BUILD)" || true
-          grep -q "BUILD SUCCEEDED" build.log
+            > build.log 2>&1 || true
+          echo "--- warnings and errors ---"
+          grep -E "(warning|error):" build.log | sort -u || true
+          echo "---"
+          grep -q "BUILD SUCCEEDED" build.log || { tail -80 build.log; exit 1; }
+
+      - name: UI tests
+        run: |
+          set -o pipefail
+          DEVICE=$(xcrun simctl list devices available | grep -E "iPhone 1[6-9] Pro \(|iPhone 1[6-9] \(" | head -1 | sed -E 's/.*\(([0-9A-F-]{36})\).*/\1/')
+          echo "Testing on $DEVICE"
+          xcodebuild test \
+            -project Cubby.xcodeproj \
+            -scheme Cubby \
+            -destination "id=$DEVICE" \
+            -derivedDataPath build \
+            -resultBundlePath ui-tests.xcresult \
+            CODE_SIGNING_ALLOWED=NO \
+            > ui-tests.log 2>&1 && STATUS=0 || STATUS=$?
+          grep -E "Test Case .*(passed|failed)|error:|Executed [0-9]+ test|TEST (SUCCEEDED|FAILED)" ui-tests.log || tail -80 ui-tests.log
+          exit $STATUS
 
       - name: Screenshots with demo data (light and dark)
+        if: always()
         run: |
           set -x
           APP=$(find build/Build/Products -name "Cubby.app" -maxdepth 3 | head -1)
           DEVICE=$(xcrun simctl list devices available | grep -E "iPhone 1[6-9] Pro \(|iPhone 1[6-9] \(" | head -1 | sed -E 's/.*\(([0-9A-F-]{36})\).*/\1/')
-          xcrun simctl boot "$DEVICE"
+          xcrun simctl boot "$DEVICE" || true   # already booted if the UI tests ran
           xcrun simctl bootstatus "$DEVICE" -b
           xcrun simctl install "$DEVICE" "$APP"
           BUNDLE=$(/usr/libexec/PlistBuddy -c "Print :CFBundleIdentifier" "$APP/Info.plist")
@@ -80,7 +100,7 @@ jobs:
             xcrun simctl ui "$DEVICE" appearance $MODE
             for SCREEN in capture timeline; do
               xcrun simctl terminate "$DEVICE" "$BUNDLE" || true
-              xcrun simctl launch "$DEVICE" "$BUNDLE" -cubbyDemo -startScreen $SCREEN
+              xcrun simctl launch "$DEVICE" "$BUNDLE" -cubbyDemo -cubbyRulesOnly -startScreen $SCREEN
               sleep 6
               xcrun simctl io "$DEVICE" screenshot "screenshots/$SCREEN-$MODE.png"
             done
@@ -94,10 +114,12 @@ jobs:
           path: screenshots/
           if-no-files-found: ignore
 
-      - name: Upload build log
+      - name: Upload logs
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: build-log
-          path: build.log
+          name: logs
+          path: |
+            build.log
+            ui-tests.log
           if-no-files-found: ignore

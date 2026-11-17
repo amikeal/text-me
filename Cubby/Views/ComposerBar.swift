@@ -17,6 +17,7 @@ struct ComposerBar: View {
                 .focused(isFocused)
                 .submitLabel(.send)
                 .onSubmit(onSend)
+                .accessibilityIdentifier("composerField")
                 .padding(.leading, 20)
                 .padding(.vertical, 16)
             SendButton(isEnabled: canSend, action: onSend)

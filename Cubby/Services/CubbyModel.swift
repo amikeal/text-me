@@ -21,7 +21,7 @@ final class CubbyModel {
     private var refreshTask: Task<Void, Never>?
 
     /// How many older entries the language model revisits per app launch or refresh.
-    static let backlogBatch = 40
+    nonisolated static let backlogBatch = 40
 
     var context: ModelContext {
         container.mainContext
@@ -130,8 +130,13 @@ final class CubbyModel {
     // MARK: - Classification
 
     /// Asks the on-device model for a better answer, if this device has one.
+    /// UI tests pass `-cubbyRulesOnly` so results don't depend on the machine's Apple Intelligence.
+    private static var modelAllowed: Bool {
+        !ProcessInfo.processInfo.arguments.contains("-cubbyRulesOnly") && FoundationModelsClassifier.isAvailable
+    }
+
     private func refine(_ entry: Entry) {
-        guard FoundationModelsClassifier.isAvailable else { return }
+        guard Self.modelAllowed else { return }
         Task { [weak self] in
             await self?.refineNow(entry)
         }
@@ -183,7 +188,7 @@ final class CubbyModel {
             fetchLinkTitle(for: entry)
         }
 
-        guard FoundationModelsClassifier.isAvailable else {
+        guard Self.modelAllowed else {
             if changed { refreshDerived() }
             return
         }

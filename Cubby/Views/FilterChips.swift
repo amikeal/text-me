@@ -32,6 +32,7 @@ struct FilterChips: View {
                 }
                 .buttonStyle(.plain)
                 .accessibilityAddTraits(isSelected ? .isSelected : [])
+                .accessibilityIdentifier("filter-\(filter.rawValue)")
             }
         }
         .padding(4)

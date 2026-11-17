@@ -38,6 +38,7 @@ struct CaptureView: View {
                     .focused($isFocused)
                     .submitLabel(.send)
                     .onSubmit(save)
+                    .accessibilityIdentifier("captureField")
                     .padding(.horizontal, 24)
                     .padding(.top, 28)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -80,6 +81,7 @@ struct CaptureView: View {
         }
         .buttonStyle(.plain)
         .glassEffect(.regular.interactive(), in: .capsule)
+        .accessibilityIdentifier("timelinePill")
     }
 
     private var bottomBar: some View {

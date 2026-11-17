@@ -75,6 +75,18 @@ targets:
         INFOPLIST_FILE: CubbyWidget/Info.plist
         CODE_SIGN_ENTITLEMENTS: CubbyWidget/CubbyWidget.entitlements
 
+  CubbyUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - path: CubbyUITests
+    dependencies:
+      - target: Cubby
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: $(CUBBY_BUNDLE_ID).uitests
+        TEST_TARGET_NAME: Cubby
+
 schemes:
   Cubby:
     build:
@@ -82,5 +94,9 @@ schemes:
         Cubby: all
     run:
       config: Debug
+    test:
+      config: Debug
+      targets:
+        - CubbyUITests
     archive:
       config: Release
