@@ -67,9 +67,14 @@ struct StreamView: View {
         .sheet(item: $editingDeadline) { entry in
             DeadlineEditor(entry: entry)
         }
-        .onAppear {
-            // Opening straight to the timeline means opening ready to type.
-            if AppSettings.startScreen == .timeline {
+        .task {
+            // Opening straight to the timeline means opening ready to type. As on the blank
+            // page, retry briefly: a cold launch can drop the first focus request.
+            guard AppSettings.startScreen == .timeline else { return }
+            composerFocused = true
+            for delay in [150, 350, 800] {
+                try? await Task.sleep(for: .milliseconds(delay))
+                if composerFocused { break }
                 composerFocused = true
             }
         }

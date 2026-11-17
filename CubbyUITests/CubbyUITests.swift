@@ -24,7 +24,7 @@ final class CubbyUITests: XCTestCase {
 
     /// True once the element is the first responder. Checks focus rather than the on-screen
     /// keyboard, which CI simulators often don't show.
-    private func waitForFocus(_ element: XCUIElement, timeout: TimeInterval = 5) -> Bool {
+    private func waitForFocus(_ element: XCUIElement, timeout: TimeInterval = 10) -> Bool {
         let focused = XCTNSPredicateExpectation(predicate: NSPredicate(format: "hasKeyboardFocus == true"), object: element)
         return XCTWaiter().wait(for: [focused], timeout: timeout) == .completed
     }

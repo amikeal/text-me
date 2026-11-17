@@ -54,7 +54,17 @@ struct CaptureView: View {
         .sheet(isPresented: $showSettings) {
             SettingsView()
         }
-        .onAppear { isFocused = true }
+        .defaultFocus($isFocused, true)
+        .task {
+            // On a cold launch a focus request made the instant the view appears can be dropped
+            // before the window is ready, so keep asking briefly until it takes.
+            isFocused = true
+            for delay in [150, 350, 800] {
+                try? await Task.sleep(for: .milliseconds(delay))
+                if isFocused { break }
+                isFocused = true
+            }
+        }
         .onChange(of: router.focusRequest) { isFocused = true }
         .sensoryFeedback(.success, trigger: savedCount)
     }
